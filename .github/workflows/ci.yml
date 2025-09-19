@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: clonar repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Paso 2: instalar Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # Paso 3: instalar dependencias
+      - name: Install dependencies
+        run: npm ci
+
+      # Paso 4: correr linters
+      - name: Run linter
+        run: npm run lint
+
+      # Paso 5: build de la PWA
+      - name: Build project
+        run: npm run build
+
+      # (Opcional) Paso 6: correr tests (si luego agregas Jest/Vitest)
+      # - name: Run tests
+      #   run: npm test
