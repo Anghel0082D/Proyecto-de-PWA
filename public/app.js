@@ -1,0 +1,55 @@
+// app.js - registra service worker y controla prompt de instalación
+
+// Mostrar splash y luego la app shell
+document.addEventListener('DOMContentLoaded', () => {
+  const splash = document.getElementById('splash');
+  const app = document.getElementById('app');
+  setTimeout(() => {
+    if (splash) splash.style.display = 'none';
+    if (app) app.hidden = false;
+  }, 700);
+});
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('/service-worker.js');
+      console.log('Service Worker registrado: ', reg);
+    } catch (err) {
+      console.error('Registro de Service Worker falló:', err);
+    }
+  });
+}
+
+// Variables globales (solo una vez)
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+// beforeinstallprompt handling (mostrar botón de instalar)
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBtn) {
+    installBtn.hidden = false;
+  }
+});
+
+installBtn?.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const choice = await deferredPrompt.userChoice;
+  console.log('Resultado prompt de instalación:', choice.outcome);
+  deferredPrompt = null;
+  installBtn.hidden = true;
+});
+
+// mostrar estado online/offline
+function updateOnlineStatus() {
+  const status = document.getElementById('status');
+  if (!status) return;
+  status.textContent = navigator.onLine ? 'En línea' : 'Sin conexión (offline)';
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
