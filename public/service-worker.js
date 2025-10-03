@@ -6,8 +6,8 @@ const PRECACHE_URLS = [
   '/styles.css',
   '/app.js',
   '/manifest.webmanifest',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons/image.png',
+  
 ];
 
 // Install: precache App Shell
