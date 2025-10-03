@@ -27,8 +27,8 @@ function App() {
   if (loading) {
     return (
       <div className="splash">
-        <img src="/icons/icon-192.png" alt="logo" className="logo" />
-        <h1>Mi PWA Demo</h1>
+        <img src="/icons/image.png" alt="logo" className="logo" />
+        <h1>Mi PWA AGCT</h1>
       </div>
     );
   }
