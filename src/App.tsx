@@ -40,6 +40,7 @@ function App() {
       <main className="content">
         <h3>Bienvenido 🚀</h3>
         <p>Esta es la App Shell con React + Vite.</p>
+        <p>Esta es la App Fue creada por Angel Gabriel Carreon Trujillo👻👻👻👻</p>
         <p>Estado: {online ? "En línea ✅" : "Offline ❌"}</p>
       </main>
 
