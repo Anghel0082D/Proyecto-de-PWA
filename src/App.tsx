@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+
 function App() {
   const [loading, setLoading] = useState(true);
   const [online, setOnline] = useState(navigator.onLine);
