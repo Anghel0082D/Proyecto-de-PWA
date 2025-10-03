@@ -1,13 +1,12 @@
 {
-  "name": "Mi PWA ",
+  "name": "Mi PWA Demo",
   "short_name": "MiPWA",
-  "description": "Demo de PWA con App Shell, Service Worker y manifest.",
+  "description": "Una Progressive Web App con React + Vite.",
   "start_url": "/",
-  "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#0d6efd",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "/icons/image.png",
