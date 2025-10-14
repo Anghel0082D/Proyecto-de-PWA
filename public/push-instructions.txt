@@ -1,0 +1,22 @@
+Para pruebas de Push:
+1) Genera claves VAPID en local (una vez):
+   npx web-push generate-vapid-keys
+   # Copia VAPID_PUBLIC_KEY y VAPID_PRIVATE_KEY a un .env
+
+2) Crea un archivo .env en la raíz con:
+   VAPID_PUBLIC_KEY=<tu_public_key>
+   VAPID_PRIVATE_KEY=<tu_private_key>
+
+3) Arranca el backend:
+   npm run dev:server
+
+4) Con la app abierta en https://localhost:5173 (o deploy HTTPS):
+   - Acepta permisos de notificaciones
+   - El script suscribirá el endpoint y lo enviará a /api/push/subscribe
+
+5) Envía una notificación de prueba:
+   curl -X POST http://localhost:3001/api/push/test \
+     -H 'Content-Type: application/json' \
+     -d '{"title":"Prueba","body":"Hola desde backend"}'
+
+Observa que la notificación sea recibida, incluso con la app en segundo plano.
