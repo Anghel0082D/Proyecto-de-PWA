@@ -99,15 +99,15 @@ self.addEventListener("sync", (event) => {
 
 async function sendPendingData() {
   console.log("Sincronizando datos almacenados...");
-  // Aquí podrías leer de IndexedDB y enviarlos al backend (o simularlo)
+  
 }
 
 self.addEventListener("push", (event) => {
   const data = event.data?.json() || { title: "Notificación", body: "Tienes una alerta" };
   const options = {
     body: data.body,
-    icon: "/icons/icon-192.png",
-    badge: "/icons/icon-512.png"
+    icon: "/icons/icons.png",
+    badge: "/icons/icons.png"
   };
   event.waitUntil(self.registration.showNotification(data.title, options));
 });
