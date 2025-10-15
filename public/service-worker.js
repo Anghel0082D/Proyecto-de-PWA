@@ -1,3 +1,7 @@
+
+const STATIC_CACHE = "static-v4";
+const DYNAMIC_CACHE = "dynamic-v2";
+const IMAGE_CACHE = "images-v1";
 const CACHE_NAME = "mi-pwa-cache-v1";
 const PRECACHE_URLS = [
   "/",
@@ -9,149 +13,101 @@ const PRECACHE_URLS = [
 ];
 
 self.addEventListener("install", (event) => {
-  console.log("[Service Worker] Instalando y precacheando...");
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS))
   );
   self.skipWaiting();
 });
 
-
-// ACTIVACIÓN (limpieza)
 self.addEventListener("activate", (event) => {
-  console.log("[Service Worker] Activado");
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys.map((key) => {
-          if (![STATIC_CACHE, DYNAMIC_CACHE, IMAGE_CACHE].includes(key)) {
-            console.log("[Service Worker] Borrando cache vieja:", key);
-            return caches.delete(key);
-          }
-        })
-      )
+      Promise.all(keys.map((key) => (key !== CACHE_NAME ? caches.delete(key) : null)))
     )
   );
   self.clients.claim();
 });
 
-//FUNCIONES DE CACHE
-async function cacheFirst(req) {
-  const cache = await caches.open(STATIC_CACHE);
-  const cached = await cache.match(req);
-  if (cached) return cached;
-  try {
-    const fresh = await fetch(req);
-    cache.put(req, fresh.clone());
-    return fresh;
-  } catch (err) {
-    if (req.mode === "navigate") {
-      return caches.match("/offline.html");
-    }
-    return new Response("Offline", { status: 503, statusText: "Offline" });
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      return (
+        cached ||
+        fetch(event.request).catch(
+          () => new Response("Offline", { status: 503, statusText: "Offline" })
+        )
+      );
+    })
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+
+  // Network-first para recursos dinámicos (APIs)
+  if (req.url.includes("/api/")) {
+    event.respondWith(networkFirst(req));
+    return;
   }
+
+  // Stale-while-revalidate para imágenes
+  if (req.destination === "image") {
+    event.respondWith(staleWhileRevalidate(req));
+    return;
+  }
+
+  // Cache-first para lo demás
+  event.respondWith(cacheFirst(req));
+});
+
+async function cacheFirst(req) {
+  const cache = await caches.open(CACHE_NAME);
+  const cached = await cache.match(req);
+  return (
+    cached ||
+    fetch(req).catch(() => caches.match("/offline.html"))
+  );
 }
 
 async function networkFirst(req) {
-  const cache = await caches.open(DYNAMIC_CACHE);
+  const cache = await caches.open(CACHE_NAME);
   try {
     const fresh = await fetch(req);
     cache.put(req, fresh.clone());
     return fresh;
-  } catch (err) {
+  } catch (e) {
     const cached = await cache.match(req);
     return cached || caches.match("/offline.html");
   }
 }
 
-async function staleWhileRevalidate(req, cacheName = IMAGE_CACHE) {
-  const cache = await caches.open(cacheName);
+async function staleWhileRevalidate(req) {
+  const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(req);
   const network = fetch(req).then((res) => {
-    if (res && res.ok) cache.put(req, res.clone());
+    cache.put(req, res.clone());
     return res;
   });
   return cached || network;
 }
 
-// FETCH EVENT (ruteo de estrategias)
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
-
-  //Recursos de API → Network-first
-  if (url.pathname.startsWith("/api/")) {
-    event.respondWith(networkFirst(req));
-    return;
-  }
-  //Imágenes → Stale-while-revalidate
-  if (req.destination === "image") {
-    event.respondWith(staleWhileRevalidate(req, IMAGE_CACHE));
-    return;
-  }
-
-  //Navegación o HTML → Cache-first con fallback offline
-  if (req.mode === "navigate") {
-    event.respondWith(cacheFirst(req));
-    return;
-  }
-
-  //CSS/JS → Cache-first
-  event.respondWith(cacheFirst(req));
-});
-
-
-// BACKGROUND SYNC (simulación sin backend)
 self.addEventListener("sync", (event) => {
   if (event.tag === "sync-entries") {
-    console.log("[Service Worker] Background Sync detectado...");
-    event.waitUntil(simularEnvio());
+    event.waitUntil(sendPendingData());
   }
 });
 
-async function simularEnvio() {
-  console.log("[Service Worker] Simulando envío de datos pendientes...");
-  // Aquí podrías abrir IndexedDB y enviar datos reales
-  await new Promise((res) => setTimeout(res, 2000));
-  console.log("[Service Worker] Datos sincronizados correctamente (simulado)");
-  return true;
+async function sendPendingData() {
+  console.log("Sincronizando datos almacenados...");
+  // Aquí podrías leer de IndexedDB y enviarlos al backend (o simularlo)
 }
 
-//  NOTIFICACIONES PUSH
 self.addEventListener("push", (event) => {
-  let data = { title: "Notificación", body: "Tienes una alerta" };
-  if (event.data) {
-    try {
-      data = event.data.json();
-    } catch {
-      data.body = event.data.text();
-    }
-  }
+  const data = event.data?.json() || { title: "Notificación", body: "Tienes una alerta" };
   const options = {
     body: data.body,
     icon: "/icons/icon-192.png",
-    badge: "/icons/icon-512.png",
-    data: { url: "/" }
+    badge: "/icons/icon-512.png"
   };
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
-});
-
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-  event.waitUntil(
-    self.clients.matchAll({ type: "window" }).then((clientsArr) => {
-      const hadWindow = clientsArr.some((w) => {
-        if (w.url === "/" && "focus" in w) {
-          w.focus();
-          return true;
-        }
-        return false;
-      });
-      if (!hadWindow && self.clients.openWindow) {
-        return self.clients.openWindow("/");
-      }
-    })
-  );
+  event.waitUntil(self.registration.showNotification(data.title, options));
 });
