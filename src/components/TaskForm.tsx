@@ -1,26 +1,33 @@
 import React, { useState } from 'react';
 import { addTask } from '../lib/idb';
 
+// ✅ Extensión de tipo para incluir SyncManager
+interface ServiceWorkerRegistrationSync extends ServiceWorkerRegistration {
+  sync: {
+    register(tag: string): Promise<void>;
+  };
+}
+
 export default function TaskForm() {
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!title) return;
+    if (!title.trim()) return;
 
     try {
       await addTask(title);
       setMessage('✅ Tarea guardada localmente.');
 
-      // Registrar sincronización en segundo plano (si está disponible)
+      // 🔄 Registro de sincronización en segundo plano
       if ('serviceWorker' in navigator && 'SyncManager' in window) {
-        const registration = await navigator.serviceWorker.ready;
-        await (registration as any).sync.register('sync-entries');
+        const registration = (await navigator.serviceWorker.ready) as ServiceWorkerRegistrationSync;
+        await registration.sync.register('sync-entries');
         setMessage('⏳ Tarea guardada y sincronización programada.');
       }
     } catch (error) {
-      console.error(error);
+      console.error('Error al guardar tarea:', error);
       setMessage('❌ Error al guardar la tarea.');
     }
 
@@ -32,7 +39,7 @@ export default function TaskForm() {
       <input
         type="text"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
         placeholder="Nueva tarea..."
       />
       <button type="submit">Agregar</button>
