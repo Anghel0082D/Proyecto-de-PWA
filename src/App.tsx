@@ -1,6 +1,8 @@
 
 import { useEffect, useState } from "react";
 import "./App.css";
+import './components/OfflineForm';
+import './components/EntriesList';
 
 
 function App() {
