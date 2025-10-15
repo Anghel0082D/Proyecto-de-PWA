@@ -1,9 +1,8 @@
 
 import { useEffect, useState } from "react";
 import "./App.css";
-import './components/OfflineForm';
-import './components/EntriesList';
-
+import TaskForm from './components/TaskForm';
+import TaskList from './components/TaskList'
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -42,12 +41,17 @@ function App() {
       </header>
       <main className="content">
         <h3>Bienvenido 🚀</h3>
-        <p>Esta es la App Shell con React + Vite.</p>
-        <p>Esta es la App Fue creada por Angel Gabriel Carreon Trujillo👻👻👻👻</p>
+        <p>Esta es la App Shell con React + Vite.</p>        <p>Esta es la App Fue creada por Angel Gabriel Carreon Trujillo👻👻👻👻</p>
         <p>Estado: {online ? "En línea ✅" : "Offline ❌"}</p>
       </main>
+      <div style={{ maxWidth: 400, margin: 'auto', padding: 20 }}>
+      <h1>Mi Lista de Tareas Offline 📝</h1>
+      <TaskForm />
+      <TaskList />
+    </div>
       <footer className="footer">© 2025 Mi PWA</footer>
     </div>
+    
   );
 }
 
