@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import TaskForm from './components/TaskForm';
-import TaskList from './components/TaskList'
+import TaskForm from "./components/TaskForm";
+import TaskList from "./components/TaskList";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -53,16 +53,63 @@ function App() {
       </header>
 
       <main className="content">
-        <h3>Bienvenido 🚀</h3>
-        <p>Esta es la App Shell con React + Vite.</p>        <p>Esta es la App Fue creada por Angel Gabriel Carreon Trujillo👻👻👻👻</p>
-        <p>Estado: {online ? "En línea ✅" : "Offline ❌"}</p>
+        <h3>Bienvenido a tu App Progresiva</h3>
+        <p>
+          Esta es una aplicación PWA desarrollada con React + Vite, lista para
+          funcionar offline, sincronizar datos y enviar notificaciones.
+        </p>
+
+        {/* Estado de conexión */}
+        <div
+          style={{
+            background: online ? "#c8f7c5" : "#f7c5c5",
+            color: online ? "#225522" : "#661111",
+            padding: "8px",
+            borderRadius: "8px",
+            marginBottom: "10px",
+            textAlign: "center",
+          }}
+        >
+          Estado: {online ? "En línea ✅" : "Offline ❌ — se guardará localmente"}
+        </div>
+
+        {/* Sección de tareas */}
+        <div style={{ maxWidth: 400, margin: "auto", padding: 20 }}>
+          <h2>📋 Lista de Tareas Offline</h2>
+          <TaskForm />
+          <TaskList />
+        </div>
+
+        {/* Botón para activar notificaciones */}
+        <button
+          onClick={async () => {
+            if ("Notification" in window) {
+              const permission = await Notification.requestPermission();
+              if (permission === "granted") {
+                new Notification("¡Notificaciones activadas!", {
+                  body: "Ahora recibirás avisos de tus tareas.",
+                  icon: "/icons/image.png",
+                });
+              }
+            }
+          }}
+          style={{
+            display: "block",
+            margin: "20px auto",
+            padding: "10px 20px",
+            borderRadius: "10px",
+            background: "#0078ff",
+            color: "#fff",
+            border: "none",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          🔔 Permitir Notificaciones
+        </button>
       </main>
-      <div style={{ maxWidth: 400, margin: 'auto', padding: 20 }}>
-      <h1>Mi Lista de Tareas Offline 📝</h1>
-      <TaskForm />
-      <TaskList />
-    </div>
-      <footer className="footer">© 2025 Mi PWA</footer>
+
+      <footer className="footer">© 2025 Mi PWA — Angel Gabriel Carreón Trujillo</footer>
     </div>
   );
 }
