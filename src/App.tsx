@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from "react";
 import "./App.css";
-import './components/OfflineForm';
-import './components/EntriesList';
+import OfflineForm from './components/OfflineForm';
+import EntriesList from './components/EntriesList';
 
 
 function App() {
@@ -45,6 +45,8 @@ function App() {
         <p>Esta es la App Shell con React + Vite.</p>
         <p>Esta es la App Fue creada por Angel Gabriel Carreon Trujillo👻👻👻👻</p>
         <p>Estado: {online ? "En línea ✅" : "Offline ❌"}</p>
+        <OfflineForm />
+        <EntriesList />
       </main>
       <footer className="footer">© 2025 Mi PWA</footer>
     </div>

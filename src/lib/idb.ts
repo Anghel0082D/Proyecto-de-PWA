@@ -15,9 +15,16 @@ interface MyDB extends DBSchema {
   };
 }
 
+export type Entry = {
+  id: number;
+  title: string;
+  content: string;
+  createdAt: number;
+};
+
 let dbPromise: Promise<IDBPDatabase<MyDB>> | null = null;
 
-export function getDB() {
+export function getDB(): Promise<IDBPDatabase<MyDB>> {
   if (!dbPromise) {
     dbPromise = openDB<MyDB>('my-pwa-db', 1, {
       upgrade(db) {
@@ -32,17 +39,17 @@ export function getDB() {
   return dbPromise;
 }
 
-export async function addEntry(entry: { title: string; content: string }) {
+export async function addEntry(entry: { title: string; content: string }): Promise<number> {
   const db = await getDB();
   return db.add('pending-entries', { ...entry, createdAt: Date.now() });
 }
 
-export async function getAllEntries() {
+export async function getAllEntries(): Promise<Entry[]> {
   const db = await getDB();
-  return db.getAll('pending-entries');
+  return db.getAll('pending-entries') as unknown as Promise<Entry[]>;
 }
 
-export async function deleteEntry(id: number) {
+export async function deleteEntry(id: number): Promise<void> {
   const db = await getDB();
   return db.delete('pending-entries', id);
 }

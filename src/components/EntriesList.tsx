@@ -1,9 +1,9 @@
 
 import { useEffect, useState } from 'react';
-import { getAllEntries, deleteEntry } from '../lib/idb';
+import { getAllEntries, deleteEntry, type Entry } from '../lib/idb';
 
 export default function EntriesList() {
-  const [entries, setEntries] = useState<any[]>([]);
+  const [entries, setEntries] = useState<Entry[]>([]);
 
   async function load() {
     const all = await getAllEntries();

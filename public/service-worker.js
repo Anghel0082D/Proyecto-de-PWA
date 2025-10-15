@@ -6,7 +6,7 @@ const CACHE_NAME = "mi-pwa-cache-v1";
 const PRECACHE_URLS = [
   "/",
   "/index.html",
-  "/manifest.webmanifest",
+  "/manifest.webmanifest.json",
   "/icons/image.png",
   "/icons/image.png",
   "/offline.html"
@@ -26,19 +26,6 @@ self.addEventListener("activate", (event) => {
     )
   );
   self.clients.claim();
-});
-
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return (
-        cached ||
-        fetch(event.request).catch(
-          () => new Response("Offline", { status: 503, statusText: "Offline" })
-        )
-      );
-    })
-  );
 });
 
 self.addEventListener("fetch", (event) => {
@@ -106,8 +93,8 @@ self.addEventListener("push", (event) => {
   const data = event.data?.json() || { title: "Notificación", body: "Tienes una alerta" };
   const options = {
     body: data.body,
-    icon: "/icons/icon-192.png",
-    badge: "/icons/icon-512.png"
+    icon: "/icons/image.png",
+    badge: "/icons/image.png"
   };
   event.waitUntil(self.registration.showNotification(data.title, options));
 });

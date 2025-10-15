@@ -2,6 +2,10 @@
 import React, { useState } from 'react';
 import { addEntry } from '../lib/idb';
 
+type SyncCapableSWRegistration = ServiceWorkerRegistration & {
+  sync: { register: (tag: string) => Promise<void> };
+};
+
 export default function OfflineForm() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -19,9 +23,9 @@ export default function OfflineForm() {
       if ('serviceWorker' in navigator && 'SyncManager' in window) {
         const registration = await navigator.serviceWorker.ready;
         try {
-          await (registration as any).sync.register('sync-entries');
+          await (registration as SyncCapableSWRegistration).sync.register('sync-entries');
           setMsg('Guardado y sincronización programada (Background Sync).');
-        } catch (err) {
+        } catch {
           setMsg('Guardado local; Background Sync no disponible (intenta en línea).');
         }
       } else {
