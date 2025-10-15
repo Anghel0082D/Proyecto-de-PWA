@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
-
 function App() {
   const [loading, setLoading] = useState(true);
   const [online, setOnline] = useState(navigator.onLine);
@@ -109,9 +109,9 @@ function App() {
         </button>
       </main>
 
-      <footer className="footer">© 2025 Mi PWA — Angel Gabriel Carreón Trujillo</footer>
-    </div>
-  );
+    <footer className="footer">© 2025 Mi PWA — Angel Gabriel Carreón Trujillo</footer>
+  </div>
+);
 }
 
 export default App;

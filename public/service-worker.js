@@ -12,7 +12,6 @@ const PRECACHE_URLS = [
   "/offline.html"
 ];
 
-// Instalar y precachear App Shell
 self.addEventListener("install", (event) => {
   console.log("[Service Worker] Instalando y precacheando App Shell...");
   event.waitUntil(
@@ -21,7 +20,6 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activar y limpiar caches viejas
 self.addEventListener("activate", (event) => {
   console.log("[Service Worker] Activando nueva versión...");
   event.waitUntil(
