@@ -53,19 +53,16 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
-  // Network-first para recursos dinámicos (APIs)
   if (req.url.includes("/api/")) {
     event.respondWith(networkFirst(req));
     return;
   }
 
-  // Stale-while-revalidate para imágenes
   if (req.destination === "image") {
     event.respondWith(staleWhileRevalidate(req));
     return;
   }
 
-  // Cache-first para lo demás
   event.respondWith(cacheFirst(req));
 });
 
@@ -120,3 +117,4 @@ self.addEventListener("push", (event) => {
   };
   event.waitUntil(self.registration.showNotification(data.title, options));
 });
+//terminla ya modificado 
