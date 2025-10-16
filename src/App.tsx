@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
+import OfflineView from "./components/OfflineView";
 function App() {
   const [loading, setLoading] = useState(true);
   const [online, setOnline] = useState(navigator.onLine);
@@ -42,6 +43,11 @@ function App() {
         <p className="brand-author">Creada por Angel Gabriel Carreón Trujillo 👻</p>
       </div>
     );
+  }
+
+  // Vista offline
+  if (!online) {
+    return <OfflineView />;
   }
 
   // Interfaz principal
