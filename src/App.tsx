@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 function App() {
   const [loading, setLoading] = useState(true);
   const [online, setOnline] = useState(navigator.onLine);
 
-  // 🟡 Splash de carga inicial
+  // Splash de carga inicial
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1200);
     return () => clearTimeout(timer);
   }, []);
 
-  // 🌐 Detectar estado online/offline
+  // Detectar estado online/offline
   useEffect(() => {
     const updateStatus = () => setOnline(navigator.onLine);
     window.addEventListener("online", updateStatus);
@@ -24,7 +23,7 @@ function App() {
     };
   }, []);
 
-  // 🔔 Registrar Service Worker (por si no lo tienes ya en main.tsx)
+  // Registrar Service Worker (por si no lo tienes ya en main.tsx)
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
@@ -34,7 +33,7 @@ function App() {
     }
   }, []);
 
-  // ⏳ Pantalla Splash (branding)
+  // Pantalla Splash (branding)
   if (loading) {
     return (
       <div className="splash">
@@ -45,7 +44,7 @@ function App() {
     );
   }
 
-  // 🧩 Interfaz principal
+  // Interfaz principal
   return (
     <div className="app">
       <header className="header">
@@ -105,7 +104,7 @@ function App() {
             fontWeight: "bold",
           }}
         >
-          🔔 Permitir Notificaciones
+          Permitir Notificaciones
         </button>
       </main>
 

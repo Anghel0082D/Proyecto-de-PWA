@@ -86,7 +86,6 @@ async function networkFirst(req) {
     return cached || caches.match("/offline.html");
   }
 }
-
 async function staleWhileRevalidate(req) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(req);
@@ -117,4 +116,3 @@ self.addEventListener("push", (event) => {
   };
   event.waitUntil(self.registration.showNotification(data.title, options));
 });
-//terminla ya modificado 
