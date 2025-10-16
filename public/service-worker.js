@@ -39,13 +39,12 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return (
-        cached ||
-        fetch(event.request).catch(
-          () => new Response("Offline", { status: 503, statusText: "Offline" })
-        )
-      );
+    fetch(event.request).catch(() => {
+      if (event.request.mode === "navigate") {
+        // si el usuario intenta navegar sin red
+        return caches.match("/offline.html");
+      }
+      return caches.match(event.request);
     })
   );
 });
